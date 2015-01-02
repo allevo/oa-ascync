@@ -4,7 +4,7 @@
   "description": "Async utils for nodejs",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/jshint . && ./node_modules/.bin/mocha test"
+    "test": "./node_modules/.bin/jshint . && ./node_modules/.bin/mocha --recursive test"
   },
   "repository": {
     "type": "git",
