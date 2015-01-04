@@ -10,6 +10,13 @@ function getObjectValues(obj) {
   return r;
 }
 
+function getFirstNotNullElement(obj) {
+  for (var k in obj) {
+    if (obj[k] !== null && obj[k] !== undefined) { return obj[k]; }
+  }
+  return undefined;
+}
+
 function hasOnlyEmptyValues(obj) {
   for (var k in obj) {
     if (obj[k]) { return false; }
@@ -53,6 +60,7 @@ function filter(mapFunction, obj, iter, callback) {
 module.exports = {
   getObjectValues: getObjectValues,
   hasOnlyEmptyValues: hasOnlyEmptyValues,
+  getFirstNotNullElement: getFirstNotNullElement,
   parallel: parallel,
   filter: filter,
 };
