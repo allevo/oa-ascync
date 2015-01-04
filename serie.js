@@ -59,46 +59,7 @@ function map(obj, iter, callback) {
   }
 }
 
-function waterfall(arr, callback) {
-  if (!Array.isArray(arr)) {
-    return callback(new Error('arr must be an array'));
-  }
-
-  var length = arr.length;
-
-  if (length === 0) {
-    return setTimeout(callback.bind(null, null, undefined), 0);
-  }
-  var current = 0;
-
-  var lastRet;
-  function execute(ret) {
-    var c;
-    if (current === 0) {
-      c = arr[current];
-    } else {
-      c = arr[current].bind(null, ret);
-    }
-    c(function(err, ret) {
-      if (err) {
-        return callback(err, lastRet);
-      }
-
-      current ++;
-      lastRet = ret;
-      if (current === length) {
-        callback(null, ret);
-      } else {
-        execute(lastRet);
-      }
-    });
-  }
-
-  execute();
-}
-
 
 module.exports.map = map;
 module.exports.series = helper.parallel.bind(null, map);
 module.exports.filter = helper.filter.bind(null, map);
-module.exports.waterfall = waterfall;

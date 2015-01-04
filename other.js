@@ -50,7 +50,7 @@ function cascade(_tasks, callback) {
       if (hasError) {
         return;
       }
-      
+
       isFirst = false;
       if (err) {
         hasError = true;
@@ -71,4 +71,43 @@ function cascade(_tasks, callback) {
   execute();
 }
 
+function waterfall(arr, callback) {
+  if (!Array.isArray(arr)) {
+    return callback(new Error('arr must be an array'));
+  }
+
+  var length = arr.length;
+
+  if (length === 0) {
+    return setTimeout(callback.bind(null, null, undefined), 0);
+  }
+  var current = 0;
+
+  var lastRet;
+  function execute(ret) {
+    var c;
+    if (current === 0) {
+      c = arr[current];
+    } else {
+      c = arr[current].bind(null, ret);
+    }
+    c(function(err, ret) {
+      if (err) {
+        return callback(err, lastRet);
+      }
+
+      current ++;
+      lastRet = ret;
+      if (current === length) {
+        callback(null, ret);
+      } else {
+        execute(lastRet);
+      }
+    });
+  }
+
+  execute();
+}
+
 module.exports.cascade = cascade;
+module.exports.waterfall = waterfall;

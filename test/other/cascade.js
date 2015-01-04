@@ -8,7 +8,7 @@ var async = require('../../index').other;
 
 
 describe('other', function () {
-  describe.only('cascade', function () {
+  describe('cascade', function () {
     describe('object', function () {
       describe('normal', function () {
         before(function (done) {

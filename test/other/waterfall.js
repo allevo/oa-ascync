@@ -3,7 +3,7 @@
 
 var assert = require('assert');
 
-var async = require('../../index').serie;
+var async = require('../../index').other;
 
 
 function duplicate(num, next) {
