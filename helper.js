@@ -1,6 +1,10 @@
 'use strict';
 
-
+/**
+ * Return all values of an given object.
+ * @param {object}
+ * @return array
+ */
 function getObjectValues(obj) {
   var l = Object.keys(obj).length;
   var r = [];
@@ -10,6 +14,11 @@ function getObjectValues(obj) {
   return r;
 }
 
+/**
+ * Return first value not null or not undefinied
+ * @param {object}
+ * @return the value or undefined
+ */
 function getFirstNotNullElement(obj) {
   for (var k in obj) {
     if (obj[k] !== null && obj[k] !== undefined) { return obj[k]; }
@@ -17,6 +26,11 @@ function getFirstNotNullElement(obj) {
   return undefined;
 }
 
+/**
+ * Return true if obj contains only false value. The test is done with a simple if
+ * @param {object}
+ * @return bool
+ */
 function hasOnlyEmptyValues(obj) {
   for (var k in obj) {
     if (obj[k]) { return false; }
