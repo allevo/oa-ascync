@@ -17,7 +17,7 @@ function mapObject(obj, iter, callback) {
     var item = obj[key];
     tasks.push({
       func: iter.bind(null, item),
-      key: key
+      key: key,
     });
   }
 
@@ -53,7 +53,7 @@ function map(obj, iter, callback) {
 
   if (isArray) {
     mapObject(obj, iter, function(err, results) {
-      if (!!results) {
+      if (results) {
         results = getObjectValues(results);
       }
       callback(err, results);

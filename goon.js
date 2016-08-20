@@ -18,7 +18,7 @@ function mapObject(obj, iter, callback) {
     var item = obj[key];
     tasks.push({
       func: iter.bind(null, item),
-      key: key
+      key: key,
     });
   }
 
@@ -26,7 +26,7 @@ function mapObject(obj, iter, callback) {
   tasks.forEach(function(element) {
     element.func(function(err, res) {
       if (err) {
-        // forcing res tu undefined
+        // forcing res to undefined
         res = undefined;
       }
       errs[element.key] = err;
