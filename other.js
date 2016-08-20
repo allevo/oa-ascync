@@ -109,5 +109,44 @@ function waterfall(arr, callback) {
   execute();
 }
 
+function __solveDependenciesTree(deps, results, callback) {
+  var taskNamesCanBeExecuted = Object.keys(deps).filter(function(k) {
+    // already done
+    if (results.hasOwnProperty(k)) return false;
+
+    for(var i in deps[k].dependencies) {
+      // not all deps are satified
+      if (!results.hasOwnProperty(deps[k].dependencies[i])) return false;
+    }
+    return true;
+  }).reduce(function(s, i) {
+    s[i] = i;
+    return s;
+  }, {});
+
+  if (Object.keys(taskNamesCanBeExecuted).length === 0 && Object.keys(deps).length !== Object.keys(results).length) {
+    return callback({ __internal__: new Error('Cannot resolve dependencies tree')}, results);
+  }
+
+  map(taskNamesCanBeExecuted, function(fnName, next) {
+    deps[fnName].task(results, next)
+  }, function(err, res) {
+    for (var k in res) {
+      results[k] = res[k];
+    }
+
+    if (err || Object.keys(deps).length === Object.keys(results).length) return callback(err, results);
+
+    __solveDependenciesTree(deps, results, callback);
+  });
+}
+
+function solveDependenciesTree(deps, callback) {
+  var results = {};
+
+  __solveDependenciesTree(deps, results, callback);
+}
+
 module.exports.cascade = cascade;
 module.exports.waterfall = waterfall;
+module.exports.solveDependenciesTree = solveDependenciesTree;
