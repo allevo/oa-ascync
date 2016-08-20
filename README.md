@@ -3,17 +3,16 @@ oa-ascync
 
 
 [![Build Status](https://travis-ci.org/allevo/oa-ascync.svg?branch=master)](https://travis-ci.org/allevo/oa-ascync)
+[![Coverage Status](https://coveralls.io/repos/github/allevo/oa-ascync/badge.svg?branch=master)](https://coveralls.io/github/allevo/oa-ascync?branch=master)
 
-This is an helper to avoid the Javascript Callback Hell.
+This library is an helper to avoid the Javascript Callback Hell.
 This project is insprired on https://github.com/caolan/async.
 
-The aim of oa-ascync is to create an unique interface of callbacks and iterators.
-
-The choosed interface is this
+Each function has this interface:
 ```javascript
 function(err, result) { /* */ }
 ```
-This permits to connect better all function present in this library.
+This permits to connect better all functions present in this library.
 
 This library has is splitted in 4 submodules.
 - parallel: continue on error (goon)
@@ -29,8 +28,8 @@ The first three submodules have 3 similar function:
 
 ## Common
 
-The difference among the submodules is how the process is done and what happen when an error occurred. In particular:
-- goon: the process is done in parallel and when an error occurred the process goes on. The final callback has an array/object of error or null as the first parameter and the result accumuled as the second.
+The difference among the submodules is how the process is done and what happens when an error occurred. In particular:
+- goon: the process is done in parallel and when an error occurred, the process goes on. The final callback has an array/object of error or null as the first parameter and the result accumuled as the second.
 - stoponerror: the process is done in parallel and when an error occurred the process is stopped. The final callback has the error or null as the first parameter and the result as the second.
 - serie: the process is done in serie. All tasks is executed one after the other waiting the next function call. If an error occurred the process is stopped. The final callback is called with the error or null as first parameter and the result accumuled as the second.
 
@@ -46,8 +45,20 @@ var elements = {a: 1, b: 2, c: 3};
 function power(el, next) {
   next(null, el * el);
 }
+// "goon" can be replaced with "stoponerror" or "serie" without any changes
 async.goon.map(elements, power, function(err, results) {
   assert.deepEqual({a: 1, b: 4, c: 9}, results);
+});
+```
+
+```javascript
+var elements = [1, 2, 3];
+function power(el, next) {
+  next(null, el * el);
+}
+// "goon" can be replaced with "stoponerror" or "serie" without any changes
+async.goon.map(elements, power, function(err, results) {
+  assert.deepEqual([1, 4, 9], results);
 });
 ```
 
@@ -68,6 +79,31 @@ function giveMeAnotherNumber(next) {
 function giveMeAString(next) {
   next(null, "A string");
 }
+// "goon" can be replaced with "stoponerror" or "serie" without any changes
+async.goon.parallel({
+  giveMeANumber: giveMeANumber,
+  giveMeAnotherNumber: giveMeAnotherNumber,
+  giveMeAString: giveMeAString,
+}, function(err, results) {
+  assert.deepEqual({
+    giveMeANumber: 1,
+    giveMeAnotherNumber: 2,
+    giveMeAString: "A string",
+  }, results);
+});
+```
+
+```javascript
+function giveMeANumber(next) {
+  next(null, 1);
+}
+function giveMeAnotherNumber(next) {
+  next(null, 2);
+}
+function giveMeAString(next) {
+  next(null, "A string");
+}
+// "goon" can be replaced with "stoponerror" or "serie" without any changes
 async.goon.parallel([giveMeANumber, giveMeAnotherNumber, giveMeAString], function(err, results) {
   assert.deepEqual([1, 2, "A string"], results);
 });
@@ -75,7 +111,7 @@ async.goon.parallel([giveMeANumber, giveMeAnotherNumber, giveMeAString], functio
 
 ### filter
 This accept an array or object and a filter function and a callback.
-- filter is a function long 2. The first parameter is the element/value of the array/object. The second is the callback should be called when the filter is done. The second parameter must be a boolean. All not-true values are considered false.
+- filter is a function long 2. The first parameter is the element/value of the array/object. The second is the callback should be called when the filter is done. The second parameter must be a boolean. *All not-true* values are considered false.
 - callback is a function long 2. The first parameter is an array/object with all errors or null. The second one is the results finished successfully.
 
 This function applies all elements/values to the filter.
@@ -89,8 +125,18 @@ async.goon.filter(elements, even, function(err, results) {
 });
 ```
 
+```javascript
+var elements = [1, 2, 3];
+function even(el, next) {
+  next(null, el % 2 === 0);
+}
+async.goon.filter(elements, even, function(err, results) {
+  assert.deepEqual([2], results);
+});
+```
+
 ## Other
-This module has 2 functions
+This module has 3 functions
 
 ### waterfall
 This function accepts an array of functions that are execute one after the other passing the result of previous function to the next. 
@@ -141,6 +187,49 @@ var tasks = {
   }],
 };
 async.other.cascade(tasks, function(err, results) {
+  assert.deepEqual({func1: 1, func2: 2, funcSum: 3, funcMultiple: 2, funcRes: {sum: 3, molt: 2}}, results);
+});
+```
+
+### solveDependenciesTree
+This function resolve a given dependecies tree. The tree is an object that describe the dependecies. This function is different from `cascade`: the value are object that describes better the dependencies and all tasks have 2 parameters.
+
+If the tree is unsolvable, an object with key `__internal__` is passed as error on final callback.
+
+```javascript
+var tree = {
+  func1: {
+    dependecies: [],
+    task: function(prev, next) {
+      setTimeout(function() { next(null, 1); }, 10);
+    },
+  },
+  func2: {
+    dependecies: [],
+    task: function(prev, next) {
+      setTimeout(function() { next(null, 2); }, 10);
+    },
+  },
+  funcSum: {
+    dependecies: ['func1', 'func2'],
+    task: function(prev, next) {
+      setTimeout(function() { next(null, prev.func1 + prev.func2); }, 10);
+    },
+  },
+  funcMultiple: {
+    dependecies: ['func1', 'func2'],
+    task: function(prev, next) {
+      setTimeout(function() { next(null, prev.func1 * prev.func2); }, 10);
+    },
+  },
+  funcRes: {
+    dependecies: ['funcSum', 'funcMultiple'],
+    task: function(prev, next) {
+      setTimeout(function() { next(null, {sum: prev.funcSum, molt: prev.funcMultiple}); }, 10);
+    },
+  },
+};
+async.other.solveDependenciesTree(tree, function(err, results) {
   assert.deepEqual({func1: 1, func2: 2, funcSum: 3, funcMultiple: 2, funcRes: {sum: 3, molt: 2}}, results);
 });
 ```
