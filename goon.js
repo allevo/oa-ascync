@@ -18,7 +18,7 @@ function mapObject(obj, iter, callback) {
     var item = obj[key];
     tasks.push({
       func: iter.bind(null, item),
-      key: key
+      key: key,
     });
   }
 

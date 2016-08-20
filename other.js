@@ -129,7 +129,7 @@ function __solveDependenciesTree(deps, results, callback) {
   }
 
   map(taskNamesCanBeExecuted, function(fnName, next) {
-    deps[fnName].task(results, next)
+    deps[fnName].task(results, next);
   }, function(err, res) {
     for (var k in res) {
       results[k] = res[k];

@@ -19,13 +19,13 @@ describe('other', function () {
               dependencies: [],
               task: function(prev, next) {
                 setTimeout(function() { next(null, 1); }, 10);
-              }
+              },
             },
             func2: {
               dependencies: [],
               task: function(prev, next) {
                 setTimeout(function() { next(null, 2); }, 10);
-              }
+              },
             },
             funcSum: {
               dependencies: ['func1', 'func2'],
@@ -98,7 +98,7 @@ describe('other', function () {
               dependencies: [],
               task: function(prev, next) {
                 setTimeout(function() { next(null, 1); }, 10);
-              }
+              },
             },
             func2: {
               dependencies: [],
@@ -159,7 +159,7 @@ describe('other', function () {
               dependencies: [],
               task: function(prev, next) {
                 setTimeout(function() { next(null, 1); }, 10);
-              }
+              },
             },
             func2: {
               dependencies: [],

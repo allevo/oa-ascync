@@ -4,10 +4,10 @@
   "description": "Async utils for nodejs",
   "main": "index.js",
   "scripts": {
-    "mocha": "mocha test",
+    "mocha": "mocha --recursive test",
     "lint": "eslint .",
-    "coverage": "istanbul cover _mocha -- -R spec",
-    "coveralls": "istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "coverage": "istanbul cover _mocha -- --recursive -R spec",
+    "coveralls": "istanbul cover _mocha --report lcovonly -- --recursive -R spec && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "travis": "npm run lint && npm run mocha && npm run coveralls",
     "test": "npm run lint && npm run mocha && npm run coverage"
   },
@@ -22,8 +22,9 @@
   },
   "homepage": "https://github.com/allevo/oa-ascync",
   "devDependencies": {
-    "istanbul": "^0.4.4",
+    "coveralls": "^2.11.12",
     "eslint": "^2.11.0",
+    "istanbul": "^0.4.4",
     "mocha": "^2.1.0",
     "mocha-lcov-reporter": "^1.2.0"
   }

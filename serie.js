@@ -49,7 +49,7 @@ function map(obj, iter, callback) {
 
   if (isArray) {
     mapObject(obj, iter, function(err, results) {
-      if (!!results) {
+      if (results) {
         results = getObjectValues(results);
       }
       callback(err, results);
