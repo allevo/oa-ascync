@@ -1,6 +1,6 @@
 {
   "name": "oa-ascync",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Async utils for nodejs",
   "main": "index.js",
   "scripts": {
