@@ -1,6 +1,5 @@
 'use strict';
 
-
 function getObjectValues(obj) {
   var l = Object.keys(obj).length;
   var r = [];
@@ -24,6 +23,13 @@ function hasOnlyEmptyValues(obj) {
   return true;
 }
 
+function getObjectFromArray(obj) {
+  var _obj = {};
+  for(var i in obj) {
+    _obj[i] = obj[i];
+  }
+  return _obj;
+}
 
 function parallel(mapFunction, obj, callback) {
   mapFunction(obj, function(item, next) { item(next); }, callback);
@@ -56,11 +62,11 @@ function filter(mapFunction, obj, iter, callback) {
   });
 }
 
-
 module.exports = {
   getObjectValues: getObjectValues,
   hasOnlyEmptyValues: hasOnlyEmptyValues,
   getFirstNotNullElement: getFirstNotNullElement,
   parallel: parallel,
   filter: filter,
+  getObjectFromArray: getObjectFromArray,
 };

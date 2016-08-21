@@ -1,8 +1,8 @@
 'use strict';
 
-
 var helper = require('./helper');
 var getObjectValues = helper.getObjectValues;
+var getObjectFromArray = helper.getObjectFromArray;
 
 
 function mapObject(obj, iter, callback) {
@@ -42,13 +42,10 @@ function mapObject(obj, iter, callback) {
 }
 
 function map(obj, iter, callback) {
+  var _obj = obj;
   var isArray = Array.isArray(obj);
   if (isArray) {
-    var _obj = {};
-    for(var i in obj) {
-      _obj[i] = obj[i];
-    }
-    obj = _obj;
+    _obj = getObjectFromArray(_obj);
   }
 
   if (isArray) {
@@ -93,7 +90,6 @@ function filter(obj, iter, callback) {
     callback(err, r);
   });
 }
-
 
 module.exports.map = map;
 module.exports.parallel = parallel;

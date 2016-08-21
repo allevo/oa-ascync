@@ -6,6 +6,7 @@
   "scripts": {
     "mocha": "mocha --recursive test",
     "lint": "eslint .",
+    "v8opts": "node --allow-natives-syntax --harmony ./node_modules/mocha/bin/_mocha --reporter mocha-performance ./test/**/*.js",
     "coverage": "istanbul cover _mocha -- --recursive -R spec",
     "coveralls": "istanbul cover _mocha --report lcovonly -- --recursive -R spec && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "travis": "npm run lint && npm run mocha && npm run coveralls",
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/allevo/oa-ascync",
   "devDependencies": {
+    "mocha-performance": "^0.1.1",
     "coveralls": "^2.11.12",
     "eslint": "^2.11.0",
     "istanbul": "^0.4.4",

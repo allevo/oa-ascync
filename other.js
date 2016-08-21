@@ -1,6 +1,5 @@
 'use strict';
 
-
 var map = require('./goon').map;
 
 function cascade(_tasks, callback) {
@@ -38,7 +37,6 @@ function cascade(_tasks, callback) {
         todo[i] = tasks[i];
       }
     }
-
 
     map(todo, function(item, next) {
       if (isFirst) {
@@ -79,31 +77,31 @@ function waterfall(arr, callback) {
   var length = arr.length;
 
   if (length === 0) {
-    return setTimeout(callback.bind(null, null, undefined), 0);
+    return callback(null, undefined);
   }
+
   var current = 0;
-
   var lastRet;
-  function execute(ret) {
-    var c;
-    if (current === 0) {
-      c = arr[current];
-    } else {
-      c = arr[current].bind(null, ret);
+  function cbk(err, ret) {
+    if (err) {
+      return callback(err, lastRet);
     }
-    c(function(err, ret) {
-      if (err) {
-        return callback(err, lastRet);
-      }
 
-      current ++;
-      lastRet = ret;
-      if (current === length) {
-        callback(null, ret);
-      } else {
-        execute(lastRet);
-      }
-    });
+    current ++;
+    lastRet = ret;
+    if (current === length) {
+      callback(null, ret);
+    } else {
+      execute(lastRet);
+    }
+  }
+
+  function execute(ret) {
+    if (current === 0) {
+      arr[current](cbk);
+    } else {
+      arr[current](ret, cbk);
+    }
   }
 
   execute();
@@ -142,9 +140,7 @@ function __solveDependenciesTree(deps, results, callback) {
 }
 
 function solveDependenciesTree(deps, callback) {
-  var results = {};
-
-  __solveDependenciesTree(deps, results, callback);
+  __solveDependenciesTree(deps, {}, callback);
 }
 
 module.exports.cascade = cascade;

@@ -2,6 +2,7 @@
 
 var helper = require('./helper');
 var getObjectValues = helper.getObjectValues;
+var getObjectFromArray = helper.getObjectFromArray;
 
 
 function mapObject(obj, iter, callback) {
@@ -38,13 +39,10 @@ function mapObject(obj, iter, callback) {
 }
 
 function map(obj, iter, callback) {
+  var _obj = obj;
   var isArray = Array.isArray(obj);
   if (isArray) {
-    var _obj = {};
-    for(var i in obj) {
-      _obj[i] = obj[i];
-    }
-    obj = _obj;
+    _obj = getObjectFromArray(_obj);
   }
 
   if (isArray) {
@@ -59,7 +57,10 @@ function map(obj, iter, callback) {
   }
 }
 
-
 module.exports.map = map;
-module.exports.series = helper.parallel.bind(null, map);
-module.exports.filter = helper.filter.bind(null, map);
+module.exports.series = function(obj, iter, callback) {
+  helper.parallel(map, obj, iter, callback);
+};
+module.exports.filter = function(obj, iter, callback) {
+  helper.filter(map, obj, iter, callback);
+};
